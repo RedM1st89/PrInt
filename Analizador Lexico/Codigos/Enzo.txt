@@ -1,16 +1,3 @@
-x = int(input("Ingresa cuantas hamburguesas quieres: "))
-
-if x <= 2:
-    precio = x * 120
-    print(f"El precio total es: {precio}")
-elif x <= 5:
-    precio = x * 110
-    print(f"Oferta especial! El precio total es: {precio}")
-else:
-    precio = x * 100
-    print(f"Oferta super especial! El precio total es: {precio}")
-    
-
 Una_Bella_Hamburguesa
 {
     El comestible Puntual;
