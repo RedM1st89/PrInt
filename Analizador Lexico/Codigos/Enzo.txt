@@ -1,0 +1,36 @@
+x = int(input("Ingresa cuantas hamburguesas quieres: "))
+
+if x <= 2:
+    precio = x * 120
+    print(f"El precio total es: {precio}")
+elif x <= 5:
+    precio = x * 110
+    print(f"Oferta especial! El precio total es: {precio}")
+else:
+    precio = x * 100
+    print(f"Oferta super especial! El precio total es: {precio}")
+    
+
+Una_Bella_Hamburguesa
+{
+    El comestible Puntual;
+    El precio Puntual;
+    Se_escribe "Ingresa cuantas hamburguesas quieres: ";
+    Escucha -el comestible;
+    Si -el comestible Envidia -a 2 Entonces
+    {
+        -el precio Dice comestible Abraza -a 120
+        Se_escribe "El precio total es:", precio
+    }
+    Si -el comestible Envidia -a 5 Entonces
+    {
+        -el precio Dice comestible Abraza -a 110
+        Se_escribe "Oferta Especial! El precio total es:", precio
+    }
+    Sino
+    {
+        -el precio Dice comestible Abraza -a 100
+        Se_escribe "Oferta Super Especial! El precio total es:", precio
+    }
+}
+Fin
