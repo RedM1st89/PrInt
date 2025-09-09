@@ -13,6 +13,8 @@ def remueve_comentarios(input: str) -> str:
 def limpia(input: str) -> str:
     #Remueve comentarios
     text = remueve_comentarios(input)
-    #Remueve espacios
-    text = ''.join(ch for ch in text if not ch.isspace())
+    # Reemplaza múltiples espacios por uno solo y elimina saltos de línea redundantes
+    text = re.sub(r'[ \t]+', ' ', text)           # Reduce espacios
+    text = re.sub(r'\n\s*\n+', '\n', text)        # Elimina saltos de línea
+    text = text.strip()                           # Elimina espacios al inicio y final
     return text

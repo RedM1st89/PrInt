@@ -2,6 +2,7 @@ from Procesos.lectura import lectura
 from Procesos.limpieza import limpia
 from Procesos.transiciones import transiciones
 from Procesos.transiciones import estados_finales
+from Procesos.tokenizador import tokenizacion
 class Lexico:
     def __init__(self, transiciones, estados_finales):
         self.estado_inicial = 0
@@ -26,7 +27,7 @@ t = lectura("Codigos/Robin.txt")
 #Limpia texto
 t = limpia(t)
 #Tokeniza el texto bonito
-tokens = Lexico.tokenizacion(lexi,t)
+tokens = tokenizacion(lexi,t)
 #Si no hay tokens, bye
 if not tokens:
     exit(1)

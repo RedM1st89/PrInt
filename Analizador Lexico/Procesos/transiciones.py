@@ -382,8 +382,8 @@ transiciones = [
     (266, 266, 'num'),  # Resto de caracteres
     
     # ---------- Números enteros ----------
-    (0, 267, 'plus'),
-    (0, 267, 'minus'), 
+    (0, 267, 'sim'), # Plus
+    (0, 267, 'sim'), # Minus
     (0, 267, 'num'),   # Signo opcional y primer dígito
     (267, 267, 'num'),  # Más dígitos
     
@@ -464,3 +464,5 @@ estados_finales = {
     267,  # Número entero (acepta más dígitos en loop)
     268   # Número decimal (acepta más decimales en loop)
 }
+
+num = ('0','1','2','3','4','5','6','7','8','9')
