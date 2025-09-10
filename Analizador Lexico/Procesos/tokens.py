@@ -69,5 +69,7 @@ llaves = {
     267: "DATA_INT",     # Número entero
     268: "DATA_DOUBLE",   # Número decimal
     271: "TRUE", #Verdad
-    277: "FALSE" #Mentira
+    277: "FALSE", #Mentira
+    278: "SIM_POS", #Simbolo negativo
+    279: "SIM_NEG" #Simbolo positivo
 }

@@ -23,7 +23,7 @@ lexi = Lexico(transiciones, estados_finales)
 
 #Inicio del programa
 #Lee archivo
-t = lectura("Codigos/Robin.txt")
+t = lectura("Codigos/Enzo.txt")
 #Limpia texto
 t = limpia(t)
 #Tokeniza el texto bonito

@@ -59,8 +59,10 @@ def tokenizacion(lexi, texto):
                     estado = trans['minuschar']
                 elif letra in num and 'num' in trans:
                     estado = trans['num']
-                elif letra in ('+', '-') and 'sim' in trans:
-                    estado = trans['sim']
+                elif letra in ('+') and 'pos' in trans:
+                    estado = trans['pos']
+                elif letra in ('-') and 'neg' in trans:
+                    estado = trans['neg']
                 elif letra == '.' and '.' in trans:
                     estado = trans['.']
                 else:

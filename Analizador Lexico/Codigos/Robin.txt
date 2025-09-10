@@ -1,4 +1,6 @@
 El gato Versatil Dice Verdad;
+El perro Puntual Dice -5;
+El ciervo Eminente Dice +99.9;
 Si gato Envidia Mentira{
 Se_Escribe "Oferta Especial! El precio total es:", precio;
 }

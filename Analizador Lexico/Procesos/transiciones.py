@@ -395,8 +395,8 @@ transiciones = [
     (266, 266, 'num'),  # Resto de caracteres
     
     # ---------- Números enteros ----------
-    (0, 267, 'sim'), # Plus
-    (0, 267, 'sim'), # Minus
+    (0, 278, 'pos'), # Plus
+    (0, 279, 'neg'), # Minus
     (0, 267, 'num'),   # Signo opcional y primer dígito
     (267, 267, 'num'),  # Más dígitos
     
@@ -404,7 +404,7 @@ transiciones = [
     (267, 268, '.'),  # Punto decimal
     (268, 268, 'num'),  # Dígitos decimales
 ]
-string_st = 263
+
 #Aceptacion
 estados_finales = {
     # Palabras clave
@@ -477,7 +477,9 @@ estados_finales = {
     265,  # String (termina con ")
     266,  # Identificador (acepta más caracteres en loop)
     267,  # Número entero (acepta más dígitos en loop)
-    268   # Número decimal (acepta más decimales en loop)
+    268,   # Número decimal (acepta más decimales en loop)
+    278, #Simbolo positivo
+    279, #Simbolo negativo
 }
 
 num = ('0','1','2','3','4','5','6','7','8','9')
