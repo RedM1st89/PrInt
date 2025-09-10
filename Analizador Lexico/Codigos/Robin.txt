@@ -1,2 +1,4 @@
-El gato Versatil Dice "Robin dice caca"
-El gato Versatil Dice "Robin"
+El gato Versatil Dice Verdad;
+Si gato Envidia Mentira{
+Se_Escribe "Oferta Especial! El precio total es:", precio;
+}

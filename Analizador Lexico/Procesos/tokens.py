@@ -67,5 +67,7 @@ llaves = {
     265: "DATA_STRING",  # String
     266: "ID",           # Identificador
     267: "DATA_INT",     # Número entero
-    268: "DATA_DOUBLE"   # Número decimal
+    268: "DATA_DOUBLE",   # Número decimal
+    271: "TRUE", #Verdad
+    277: "FALSE" #Mentira
 }
