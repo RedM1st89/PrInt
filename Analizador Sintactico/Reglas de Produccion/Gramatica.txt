@@ -1,15 +1,15 @@
 Class -> process id delim_lkey Cont delim_rkey end_process
 Cont -> Cont' | Cont' Cont
-Cont' -> Defi | Cond | Asig | Impr | Lect
+Cont' -> Defi | Cond | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile
 
 Condif -> Condif' end_if | Condif' else delim_lkey Cont delim_rkey end_if
 Condif' -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey
 
 Func -> function id equal id delim_lparen 
 
-CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Cont delim_rkey
+CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Cont delim_rkey end_while
 CycleRep -> repeat delim_lkey Cont delim_rkey until delim_lparen Exprelog delim_rkey
-CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Cont delim_rkey end_for
+//CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Cont delim_rkey end_for
 
 //exprelog -> exprelog’ opelog exprelog’
 //exprelog’ -> ID opeasig ID | ID opeasig valor | ID opeasig ID exprelog’’ | ID opeasig valor exprelog’’
