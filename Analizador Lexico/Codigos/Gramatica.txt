@@ -9,7 +9,7 @@ Func -> function id equal id delim_lparen
 
 CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Cont delim_rkey
 CycleRep -> repeat delim_lkey Cont delim_rkey until delim_lparen Exprelog delim_rkey
-CycleFor -> for 
+CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Cont delim_rkey end_for
 
 //exprelog -> exprelog’ opelog exprelog’
 //exprelog’ -> ID opeasig ID | ID opeasig valor | ID opeasig ID exprelog’’ | ID opeasig valor exprelog’’
