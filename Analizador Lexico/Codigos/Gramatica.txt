@@ -1,0 +1,41 @@
+Class -> process id delim_lkey Cont delim_rkey end_process
+Cont -> Cont' | Cont' Cont
+Cont' -> Defi | Cond | Asig | Impr | Lect
+
+Condif -> Condif' end_if | Condif' else delim_lkey Cont delim_rkey end_if
+Condif' -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey
+
+Func -> function id equal id delim_lparen 
+
+CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Cont delim_rkey
+CycleRep -> repeat delim_lkey Cont delim_rkey until delim_lparen Exprelog delim_rkey
+CycleFor -> for 
+
+//exprelog -> exprelog’ opelog exprelog’
+//exprelog’ -> ID opeasig ID | ID opeasig valor | ID opeasig ID exprelog’’ | ID opeasig valor exprelog’’
+//exprelog’’ -> opelog exprelog’
+Exprelog -> Exprelog’| Exprelog’ Opelog Exprelog
+Exprelog' -> ID Opeasig ID | ID Opeasig Valornorm | Valornorm Opeasig ID 
+//| valorbool opebool ID | ID opebool valorbool | ID opebool ID
+Expremath -> id Simb Valornum | Valornum Simb id | id Simb id | valornum Simb valornum
+Exprestring -> id plus id | id plus data_string | data_string plus id| data_string plus data_string 
+
+Typed -> int | real | bool | char | string
+Simb -> plus | minus | mult | div | exp | modulo
+Valor -> data_int | data_double | data_string | true | false 
+Valornum -> data_int | data_double
+Opeasig -> less | more | same | less_same | more_same | diff
+Opelog -> and | or | not
+//valornorm -> data_int | data_double | data_string
+//valorbool -> true | false
+//opebool -> same | diff
+
+
+Asig -> id equal Valor delim_line | id equal id delim_line | id equal Expremath delim_line |id equal Exprestring delim_line
+Impr -> write Impr' delim_line
+Impr' -> Valor | id | Valor delim_comma Impr' | id delim_comma Impr'
+Lect -> read id delim_line
+Defi -> definir id Typed delim_line
+
+
+

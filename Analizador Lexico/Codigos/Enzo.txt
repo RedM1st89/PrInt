@@ -6,18 +6,18 @@ Para unabellahamburguesa
     Escucha -el comestible;
     Si -el comestible Envidia -a 2 Entonces
     {
-        -el precio Dice comestible Abraza -a 120
-        Se_Escribe "El precio total es:", precio
+        -el precio Dice comestible Abraza -a 120;
+        Se_Escribe "El precio total es:", precio;
     }
     Si -el comestible Envidia -a 5 Entonces
     {
-        -el precio Dice comestible Abraza -a 110
-        Se_Escribe "Oferta Especial! El precio total es:", precio
+        -el precio Dice comestible Abraza -a 110;
+        Se_Escribe "Oferta Especial! El precio total es:", precio;
     }
     Sino
     {
-        -el precio Dice comestible Abraza -a 100
-        Se_Escribe "Oferta Super Especial! El precio total es:", precio
+        -el precio Dice comestible Abraza -a 100;
+        Se_Escribe "Oferta Super Especial! El precio total es:", precio;
     }
 }
 Fin
