@@ -1,41 +1,73 @@
+Program -> Class Program'
+Program' -> Func Program' | ε
+
 Class -> process id delim_lkey Cont delim_rkey end_process
-Cont -> Cont' | Cont' Cont
-Cont' -> Defi | Cond | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile
+Cont -> Accon Cont'
+Cont' -> Accon Cont' | ε
+Accon -> Defi | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec
 
-Condif -> Condif' end_if | Condif' else delim_lkey Cont delim_rkey end_if
-Condif' -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey
+Condif -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey Condif' 
+Condif' -> else delim_lkey Cont delim_rkey end_if | end_if
 
-Func -> function id equal id delim_lparen 
+Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey
 
-CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Cont delim_rkey end_while
-CycleRep -> repeat delim_lkey Cont delim_rkey until delim_lparen Exprelog delim_rkey
-//CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Cont delim_rkey end_for
+CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Contblo delim_rkey end_while
+CycleRep -> repeat delim_lkey Contblo delim_rkey until delim_lparen Exprelog delim_rparen
+CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Contblo delim_rkey end_for
 
-//exprelog -> exprelog’ opelog exprelog’
-//exprelog’ -> ID opeasig ID | ID opeasig valor | ID opeasig ID exprelog’’ | ID opeasig valor exprelog’’
-//exprelog’’ -> opelog exprelog’
-Exprelog -> Exprelog’| Exprelog’ Opelog Exprelog
-Exprelog' -> ID Opeasig ID | ID Opeasig Valornorm | Valornorm Opeasig ID 
-//| valorbool opebool ID | ID opebool valorbool | ID opebool ID
-Expremath -> id Simb Valornum | Valornum Simb id | id Simb id | valornum Simb valornum
-Exprestring -> id plus id | id plus data_string | data_string plus id| data_string plus data_string 
+Multselec -> switch delim_lparen id delim_rparen select Multselec’ default delim_enter delim_lkey Contswi delim_rkey
+Multselec’ -> Multselec’’ Multselec’ | ε
+Multselec’’ -> data_int delim_enter delim_lkey Contswi delim_rkey
+
+Contblo -> Acblo Contblo'
+Contblo' -> Acblo Contblo' | ε
+Acblo -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec
+
+Contswi -> Acswi Contswi'
+Contswi' -> Acswi Contswi' | ε
+Acswi -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile
+
+Exprelog -> Log Exprelog’
+Exprelog’ -> Opelog Log Exprelog’ | ε
+Log -> id Opeasig Valorlog | Valornum Opeasig Valorlog
+
+//Expremath -> id Simb Valorlog | Valornum Simb Valorlog | Mathfunc
+Expremath -> Valornum Expremath' | Mathfunc
+Expremath' -> Simb Valorlog | ε
+Mathfunc -> Mathfunc' delim_lparen id delim_rparen
+Mathfunc' -> fun_sqrt | fun_abs | fun_ln | fun_exp | fun_sen | fun_cos | fun_atan | fun_trunc | fun_round | fun_rand 
+
+//Exprestring -> id plus Valorstring | data_string plus Valorstring
+Exprestring -> data_string Exprestring'
+Exprestring' -> plus Valorstring | ε
+
+Expression -> id Expression'
+Expression' -> Usfun | Simb Valorexp | ε
+
 
 Typed -> int | real | bool | char | string
 Simb -> plus | minus | mult | div | exp | modulo
 Valor -> data_int | data_double | data_string | true | false 
 Valornum -> data_int | data_double
+Valorlog -> id | Valornum
+Valorexp -> id | Valornum | data_string
+Valorstring -> id | data_string
+Valorbool -> true | false
 Opeasig -> less | more | same | less_same | more_same | diff
 Opelog -> and | or | not
-//valornorm -> data_int | data_double | data_string
-//valorbool -> true | false
+//Valornorm -> data_int | data_double | data_string
 //opebool -> same | diff
 
-
-Asig -> id equal Valor delim_line | id equal id delim_line | id equal Expremath delim_line |id equal Exprestring delim_line
+Asig -> id equal Asig’ delim_line
+Asig’ -> Expremath | Exprestring | Valorbool | Expression
 Impr -> write Impr' delim_line
-Impr' -> Valor | id | Valor delim_comma Impr' | id delim_comma Impr'
+Impr' -> Valor Printmul | id Printmul
+Printmul -> delim_comma Printmul' Printmul | ε
+Printmul' -> id | Valor
 Lect -> read id delim_line
 Defi -> definir id Typed delim_line
 
-
+Usfun -> delim_lparen Varmul delim_rparen | ε
+Varmul -> id Varmul'
+Varmul' -> delim_comma id Varmul' | ε
 
