@@ -1,5 +1,5 @@
-from Procesos.tokens import llaves
-from Procesos.transiciones import num
+from .tokens import llaves
+from .transiciones import num
 
 def tokenizacion(lexi, texto):
     resultado = []
