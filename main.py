@@ -2,7 +2,10 @@ from Analizador_Lexico.Lexi import inicia_lexico
 from Analizador_Sintactico.Sintac import inicia_sintactico
 from pathlib import Path
 
-t = ",".join(inicia_lexico())
+file = input('Hola! Dime el nombre del archivo que quieres probar:) >>>')
+file = (f"Codigos/{file}.txt")
+
+t = ",".join(inicia_lexico(file))
 from pathlib import Path
 
 folder = "Analizador_Lexico/Resultados"

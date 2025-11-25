@@ -18,7 +18,7 @@ class Lexico:
             estados[origen][simbolo] = destino
         return estados
 
-def inicia_lexico(archivo="Codigos/Enzo.txt"):
+def inicia_lexico(archivo):
     current_dir = os.path.dirname(os.path.abspath(__file__))
     full_path = os.path.join(current_dir, archivo)
     
