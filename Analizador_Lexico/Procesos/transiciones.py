@@ -487,6 +487,8 @@ estados_finales = {
     256,  # Trunca
     271,  # Verdad
     277,  # Mentira
+    292,  # Posdata 
+    296,  # Adios
     
     # Símbolos
     257,  # ;

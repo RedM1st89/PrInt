@@ -136,7 +136,7 @@ class SyntaxAnalyzer:
     
     # ========== Function ==========
     def Func(self):
-        """Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey"""
+        """Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey end_function"""
         if not self.match("FUNCTION"):
             return self.error("FUNCTION")
         if not self.match("ID"):
@@ -157,6 +157,8 @@ class SyntaxAnalyzer:
             return False
         if not self.match("DELIM_RKEY"):
             return self.error("DELIM_RKEY")
+        if not self.match("END_FUNCTION"):
+            return self.error("END_FUNCTION")
         return True
     
     # ========== Cycles ==========
