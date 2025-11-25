@@ -3,13 +3,14 @@ from Analizador_Sintactico.Sintac import inicia_sintactico
 from pathlib import Path
 
 file = input('Hola! Dime el nombre del archivo que quieres probar:) >>>')
+nom = file
 file = (f"Codigos/{file}.txt")
 
 t = ",".join(inicia_lexico(file))
 from pathlib import Path
 
 folder = "Analizador_Lexico/Resultados"
-nombre = "Resultado.txt"
+nombre = f"Res_{nom}.txt"
 
 folder_path = Path(folder)
 
