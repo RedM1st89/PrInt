@@ -5,36 +5,42 @@ class SyntaxAnalyzer:
         self.current = self.tokens[0] if tokens else None
         self.errors = []
     
+    # Avanza un token
     def advance(self):
-        """Move to the next token"""
+        # Agrega uno a la posicion que se busca, comprueba que no sea el final del recorrido y luego actualiza el token
         self.pos += 1
         if self.pos < len(self.tokens):
             self.current = self.tokens[self.pos]
         else:
+        # Si ya llego al final, entonces NONE
             self.current = None
     
+    # Checa el token
     def match(self, expected):
-        """Check if current token matches expected token"""
+        # Si el actual es como el esperado (el token que se necesita)
         if self.current == expected:
+            # Avanza un token
             self.advance()
+            # Regresa true a las condicionales de terminal
             return True
+        # Regresa false y se acabo todo jeje
         return False
     
+    # Cuando no se cumpla con el token, regresara el error de que token se esperaba
     def error(self, expected):
-        """Record syntax error"""
         msg = f"Error en posición {self.pos}: Se esperaba '{expected}', se encontró '{self.current}'"
         self.errors.append(msg)
         return False
     
-    # ========== Main Program Structure ==========
+    # Inicio del programa
     def Program(self):
-        """Program -> Class Program'"""
+        #Program -> Class Program'
         if not self.Class():
             return False
         return self.ProgramPrime()
     
     def ProgramPrime(self):
-        """Program' -> Func Program' | ε"""
+        #Program' -> Func Program' | ε
         if self.current and self.current == "FUNCTION":
             if not self.Func():
                 return False
@@ -42,7 +48,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Class(self):
-        """Class -> process id delim_lkey Cont delim_rkey end_process"""
+        #Class -> process id delim_lkey Cont delim_rkey end_process
         if not self.match("PROCESS"):
             return self.error("PROCESS")
         if not self.match("ID"):
@@ -58,13 +64,13 @@ class SyntaxAnalyzer:
         return True
     
     def Cont(self):
-        """Cont -> Accon Cont'"""
+        #Cont -> Accon Cont'
         if not self.Accon():
             return False
         return self.ContPrime()
     
     def ContPrime(self):
-        """Cont' -> Accon Cont' | ε"""
+        #Cont' -> Accon Cont' | ε
         if self.current in ["DEFINIR", "ID", "WRITE", "READ", "IF", "FOR", "REPEAT", "WHILE", "SWITCH"]:
             if not self.Accon():
                 return False
@@ -72,7 +78,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Accon(self):
-        """Accon -> Defi | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec"""
+        #Accon -> Defi | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec
         if self.current == "DEFINIR":
             return self.Defi()
         elif self.current == "ID":
@@ -94,9 +100,9 @@ class SyntaxAnalyzer:
         else:
             return self.error("DEFINIR, ID, WRITE, READ, IF, FOR, REPEAT, WHILE, or SWITCH")
     
-    # ========== Conditional Structure ==========
+    # Condicionales
     def Condif(self):
-        """Condif -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey Condif'"""
+        #Condif -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey Condif'
         if not self.match("IF"):
             return self.error("IF")
         if not self.match("DELIM_LPAREN"):
@@ -116,7 +122,7 @@ class SyntaxAnalyzer:
         return self.CondifPrime()
     
     def CondifPrime(self):
-        """Condif' -> else delim_lkey Cont delim_rkey end_if | end_if"""
+        #Condif' -> else delim_lkey Cont delim_rkey end_if | end_if
         if self.current == "ELSE":
             self.advance()
             if not self.match("DELIM_LKEY"):
@@ -136,7 +142,7 @@ class SyntaxAnalyzer:
     
     # ========== Function ==========
     def Func(self):
-        """Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey end_function"""
+        #Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey end_function
         if not self.match("FUNCTION"):
             return self.error("FUNCTION")
         if not self.match("ID"):
@@ -163,7 +169,7 @@ class SyntaxAnalyzer:
     
     # ========== Cycles ==========
     def CycleWhile(self):
-        """CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Contblo delim_rkey end_while"""
+        #CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Contblo delim_rkey end_while
         if not self.match("WHILE"):
             return self.error("WHILE")
         if not self.match("DELIM_LPAREN"):
@@ -185,7 +191,7 @@ class SyntaxAnalyzer:
         return True
     
     def CycleRep(self):
-        """CycleRep -> repeat delim_lkey Contblo delim_rkey until delim_lparen Exprelog delim_rparen"""
+        #CycleRep -> repeat delim_lkey Contblo delim_rkey until delim_lparen Exprelog delim_rparen
         if not self.match("REPEAT"):
             return self.error("REPEAT")
         if not self.match("DELIM_LKEY"):
@@ -205,7 +211,7 @@ class SyntaxAnalyzer:
         return True
     
     def CycleFor(self):
-        """CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Contblo delim_rkey end_for"""
+        #CycleFor -> for id equal data_int through data_int rate data_int do_for delim_lkey Contblo delim_rkey end_for
         if not self.match("FOR"):
             return self.error("FOR")
         if not self.match("ID"):
@@ -236,7 +242,7 @@ class SyntaxAnalyzer:
     
     # ========== Multi-Selection (Switch) ==========
     def Multselec(self):
-        """Multselec -> switch delim_lparen id delim_rparen select Multselec' default delim_enter delim_lkey Contswi delim_rkey"""
+        #Multselec -> switch delim_lparen id delim_rparen select Multselec' default delim_enter delim_lkey Contswi delim_rkey
         if not self.match("SWITCH"):
             return self.error("SWITCH")
         if not self.match("DELIM_LPAREN"):
@@ -262,7 +268,7 @@ class SyntaxAnalyzer:
         return True
     
     def MultselecPrime(self):
-        """Multselec' -> Multselec'' Multselec' | ε"""
+        #Multselec' -> Multselec'' Multselec' | ε
         if self.current == "DATA_INT":
             if not self.MultselecDoublePrime():
                 return False
@@ -270,7 +276,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def MultselecDoublePrime(self):
-        """Multselec'' -> data_int delim_enter delim_lkey Contswi delim_rkey"""
+        #Multselec'' -> data_int delim_enter delim_lkey Contswi delim_rkey
         if not self.match("DATA_INT"):
             return self.error("DATA_INT")
         if not self.match("DELIM_ENTER"):
@@ -285,13 +291,13 @@ class SyntaxAnalyzer:
     
     # ========== Block Content ==========
     def Contblo(self):
-        """Contblo -> Acblo Contblo'"""
+        #Contblo -> Acblo Contblo'
         if not self.Acblo():
             return False
         return self.ContbloPrime()
     
     def ContbloPrime(self):
-        """Contblo' -> Acblo Contblo' | ε"""
+        #Contblo' -> Acblo Contblo' | ε
         if self.current in ["ID", "WRITE", "READ", "IF", "FOR", "REPEAT", "WHILE", "SWITCH"]:
             if not self.Acblo():
                 return False
@@ -299,7 +305,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Acblo(self):
-        """Acblo -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec"""
+        #Acblo -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile | Multselec
         if self.current == "ID":
             return self.Asig()
         elif self.current == "WRITE":
@@ -321,13 +327,13 @@ class SyntaxAnalyzer:
     
     # ========== Switch Content ==========
     def Contswi(self):
-        """Contswi -> Acswi Contswi'"""
+        #Contswi -> Acswi Contswi'
         if not self.Acswi():
             return False
         return self.ContswiPrime()
     
     def ContswiPrime(self):
-        """Contswi' -> Acswi Contswi' | ε"""
+        #Contswi' -> Acswi Contswi' | ε
         if self.current in ["ID", "WRITE", "READ", "IF", "FOR", "REPEAT", "WHILE"]:
             if not self.Acswi():
                 return False
@@ -335,7 +341,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Acswi(self):
-        """Acswi -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile"""
+        #Acswi -> Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile
         if self.current == "ID":
             return self.Asig()
         elif self.current == "WRITE":
@@ -355,13 +361,13 @@ class SyntaxAnalyzer:
     
     # ========== Logical Expressions ==========
     def Exprelog(self):
-        """Exprelog -> Log Exprelog'"""
+        #Exprelog -> Log Exprelog'
         if not self.Log():
             return False
         return self.ExprelogPrime()
     
     def ExprelogPrime(self):
-        """Exprelog' -> Opelog Log Exprelog' | ε"""
+        #Exprelog' -> Opelog Log Exprelog' | ε
         if self.current in ["AND", "OR", "NOT"]:
             if not self.Opelog():
                 return False
@@ -371,7 +377,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Log(self):
-        """Log -> id Opeasig Valorlog | Valornum Opeasig Valorlog"""
+        #Log -> id Opeasig Valorlog | Valornum Opeasig Valorlog
         if self.current == "ID":
             self.advance()
             if not self.Opeasig():
@@ -388,7 +394,7 @@ class SyntaxAnalyzer:
     
     # ========== Math Expressions ==========
     def Expremath(self):
-        """Expremath -> Valornum Expremath' | Mathfunc"""
+        #Expremath -> Valornum Expremath' | Mathfunc
         if self.current in ["DATA_INT", "DATA_DOUBLE"]:
             if not self.Valornum():
                 return False
@@ -399,7 +405,7 @@ class SyntaxAnalyzer:
             return self.error("DATA_INT, DATA_DOUBLE, or Math Function")
     
     def ExpremathPrime(self):
-        """Expremath' -> Simb Valorlog | ε"""
+        #Expremath' -> Simb Valorlog | ε
         if self.current in ["PLUS", "MINUS", "MULT", "DIV", "EXP", "MODULO"]:
             if not self.Simb():
                 return False
@@ -407,7 +413,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Mathfunc(self):
-        """Mathfunc -> Mathfunc' delim_lparen id delim_rparen"""
+        #Mathfunc -> Mathfunc' delim_lparen id delim_rparen
         if not self.MathfuncPrime():
             return False
         if not self.match("DELIM_LPAREN"):
@@ -419,7 +425,7 @@ class SyntaxAnalyzer:
         return True
     
     def MathfuncPrime(self):
-        """Mathfunc' -> fun_sqrt | fun_abs | fun_ln | fun_exp | fun_sen | fun_cos | fun_atan | fun_trunc | fun_round | fun_rand"""
+        #Mathfunc' -> fun_sqrt | fun_abs | fun_ln | fun_exp | fun_sen | fun_cos | fun_atan | fun_trunc | fun_round | fun_rand
         if self.current in ["FUN_SQRT", "FUN_ABS", "FUN_LN", "FUN_EXP", "FUN_SEN", "FUN_COS", "FUN_ATAN", "FUN_TRUNC", "FUN_ROUND", "FUN_RAND"]:
             self.advance()
             return True
@@ -427,13 +433,13 @@ class SyntaxAnalyzer:
     
     # ========== String Expressions ==========
     def Exprestring(self):
-        """Exprestring -> data_string Exprestring'"""
+        #Exprestring -> data_string Exprestring'
         if not self.match("DATA_STRING"):
             return self.error("DATA_STRING")
         return self.ExprestringPrime()
     
     def ExprestringPrime(self):
-        """Exprestring' -> plus Valorstring | ε"""
+        #Exprestring' -> plus Valorstring | ε
         if self.current == "PLUS":
             self.advance()
             return self.Valorstring()
@@ -441,13 +447,13 @@ class SyntaxAnalyzer:
     
     # ========== General Expression ==========
     def Expression(self):
-        """Expression -> id Expression'"""
+        #Expression -> id Expression'
         if not self.match("ID"):
             return self.error("ID")
         return self.ExpressionPrime()
     
     def ExpressionPrime(self):
-        """Expression' -> Usfun | Simb Valorexp | ε"""
+        #Expression' -> Usfun | Simb Valorexp | ε
         if self.current == "DELIM_LPAREN":
             return self.Usfun()
         elif self.current in ["PLUS", "MINUS", "MULT", "DIV", "EXP", "MODULO"]:
@@ -458,7 +464,7 @@ class SyntaxAnalyzer:
     
     # ========== Basic Statements ==========
     def Asig(self):
-        """Asig -> id equal Asig' delim_line"""
+        #Asig -> id equal Asig' delim_line
         if not self.match("ID"):
             return self.error("ID")
         if not self.match("EQUAL"):
@@ -470,7 +476,7 @@ class SyntaxAnalyzer:
         return True
     
     def AsigPrime(self):
-        """Asig' -> Expremath | Exprestring | Valorbool | Expression"""
+        #Asig' -> Expremath | Exprestring | Valorbool | Expression
         if self.current in ["DATA_INT", "DATA_DOUBLE"] or self.current in ["FUN_SQRT", "FUN_ABS", "FUN_LN", "FUN_EXP", "FUN_SEN", "FUN_COS", "FUN_ATAN", "FUN_TRUNC", "FUN_ROUND", "FUN_RAND"]:
             return self.Expremath()
         elif self.current == "DATA_STRING":
@@ -483,7 +489,7 @@ class SyntaxAnalyzer:
             return self.error("Expression")
     
     def Impr(self):
-        """Impr -> write Impr' delim_line"""
+        #Impr -> write Impr' delim_line
         if not self.match("WRITE"):
             return self.error("WRITE")
         if not self.ImprPrime():
@@ -493,7 +499,7 @@ class SyntaxAnalyzer:
         return True
     
     def ImprPrime(self):
-        """Impr' -> Valor Printmul | id Printmul"""
+        #Impr' -> Valor Printmul | id Printmul
         if self.current in ["DATA_INT", "DATA_DOUBLE", "DATA_STRING", "TRUE", "FALSE"]:
             if not self.Valor():
                 return False
@@ -505,7 +511,7 @@ class SyntaxAnalyzer:
             return self.error("Value or ID")
     
     def Printmul(self):
-        """Printmul -> delim_comma Printmul' Printmul | ε"""
+        #Printmul -> delim_comma Printmul' Printmul | ε
         if self.current == "DELIM_COMMA":
             self.advance()
             if not self.PrintmulPrime():
@@ -514,7 +520,7 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def PrintmulPrime(self):
-        """Printmul' -> id | Valor"""
+        #Printmul' -> id | Valor
         if self.current == "ID":
             self.advance()
             return True
@@ -524,7 +530,7 @@ class SyntaxAnalyzer:
             return self.error("ID or Value")
     
     def Lect(self):
-        """Lect -> read id delim_line"""
+        #Lect -> read id delim_line
         if not self.match("READ"):
             return self.error("READ")
         if not self.match("ID"):
@@ -534,7 +540,7 @@ class SyntaxAnalyzer:
         return True
     
     def Defi(self):
-        """Defi -> definir id Typed delim_line"""
+        #Defi -> definir id Typed delim_line
         if not self.match("DEFINIR"):
             return self.error("DEFINIR")
         if not self.match("ID"):
@@ -547,7 +553,7 @@ class SyntaxAnalyzer:
     
     # ========== Function Usage ==========
     def Usfun(self):
-        """Usfun -> delim_lparen Varmul delim_rparen | ε"""
+        #Usfun -> delim_lparen Varmul delim_rparen | ε
         if self.current == "DELIM_LPAREN":
             self.advance()
             if not self.Varmul():
@@ -558,13 +564,13 @@ class SyntaxAnalyzer:
         return True  # ε
     
     def Varmul(self):
-        """Varmul -> id Varmul'"""
+        #Varmul -> id Varmul'
         if not self.match("ID"):
             return self.error("ID")
         return self.VarmulPrime()
     
     def VarmulPrime(self):
-        """Varmul' -> delim_comma id Varmul' | ε"""
+        #Varmul' -> delim_comma id Varmul' | ε
         if self.current == "DELIM_COMMA":
             self.advance()
             if not self.match("ID"):
@@ -574,35 +580,35 @@ class SyntaxAnalyzer:
     
     # ========== Terminal Symbols ==========
     def Typed(self):
-        """Typed -> int | real | bool | char | string"""
+        #Typed -> int | real | bool | char | string
         if self.current in ["INT", "REAL", "BOOL", "CHAR", "STRING"]:
             self.advance()
             return True
         return self.error("INT, REAL, BOOL, CHAR, or STRING")
     
     def Simb(self):
-        """Simb -> plus | minus | mult | div | exp | modulo"""
+        #Simb -> plus | minus | mult | div | exp | modulo
         if self.current in ["PLUS", "MINUS", "MULT", "DIV", "EXP", "MODULO"]:
             self.advance()
             return True
         return self.error("Operator")
     
     def Valor(self):
-        """Valor -> data_int | data_double | data_string | true | false"""
+        #Valor -> data_int | data_double | data_string | true | false
         if self.current in ["DATA_INT", "DATA_DOUBLE", "DATA_STRING", "TRUE", "FALSE"]:
             self.advance()
             return True
         return self.error("Value")
     
     def Valornum(self):
-        """Valornum -> data_int | data_double"""
+        #Valornum -> data_int | data_double
         if self.current in ["DATA_INT", "DATA_DOUBLE"]:
             self.advance()
             return True
         return self.error("DATA_INT or DATA_DOUBLE")
     
     def Valorlog(self):
-        """Valorlog -> id | Valornum"""
+        #Valorlog -> id | Valornum
         if self.current == "ID":
             self.advance()
             return True
@@ -612,7 +618,7 @@ class SyntaxAnalyzer:
             return self.error("ID or numeric value")
     
     def Valorexp(self):
-        """Valorexp -> id | Valornum | data_string"""
+        #Valorexp -> id | Valornum | data_string
         if self.current == "ID":
             self.advance()
             return True
@@ -625,28 +631,28 @@ class SyntaxAnalyzer:
             return self.error("ID, numeric value, or string")
     
     def Valorstring(self):
-        """Valorstring -> id | data_string"""
+        #Valorstring -> id | data_string
         if self.current in ["ID", "DATA_STRING"]:
             self.advance()
             return True
         return self.error("ID or DATA_STRING")
     
     def Valorbool(self):
-        """Valorbool -> true | false"""
+        #Valorbool -> true | false
         if self.current in ["TRUE", "FALSE"]:
             self.advance()
             return True
         return self.error("TRUE or FALSE")
     
     def Opeasig(self):
-        """Opeasig -> less | more | same | less_same | more_same | diff"""
+        #Opeasig -> less | more | same | less_same | more_same | diff
         if self.current in ["LESS", "MORE", "SAME", "LESS_SAME", "MORE_SAME", "DIFF"]:
             self.advance()
             return True
         return self.error("Comparison operator")
     
     def Opelog(self):
-        """Opelog -> and | or | not"""
+        #Opelog -> and | or | not
         if self.current in ["AND", "OR", "NOT"]:
             self.advance()
             return True
@@ -654,7 +660,7 @@ class SyntaxAnalyzer:
     
     # ========== Main Analysis Function ==========
     def analyze(self):
-        """Start syntax analysis"""
+        #Start syntax analysis
         success = self.Program()
         
         if success and self.current is None:
@@ -671,15 +677,7 @@ class SyntaxAnalyzer:
 
 
 def inicia_sintactico(tokens_str):
-    """
-    Initialize syntax analyzer with token string
-    
-    Args:
-        tokens_str: String of comma-separated tokens (e.g., "PROCESS,ID,DELIM_LKEY,...")
-    
-    Returns:
-        bool: True if syntax is valid, False otherwise
-    """
+    # ransforma string en lista, analiza los tokens y regresa bool
     tokens = tokens_str.split(',')
     analyzer = SyntaxAnalyzer(tokens)
     return analyzer.analyze()
