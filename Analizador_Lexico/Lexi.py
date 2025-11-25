@@ -28,6 +28,6 @@ def inicia_lexico(archivo="Codigos/Enzo.txt"):
     tokens = tokenizacion(lexi, t)
     if not tokens:
         return None
-    print("Lexico: ", tokens)
+    #print("Lexico: ", tokens)
     
     return tokens

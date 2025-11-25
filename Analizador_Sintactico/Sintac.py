@@ -655,18 +655,16 @@ class SyntaxAnalyzer:
     # ========== Main Analysis Function ==========
     def analyze(self):
         """Start syntax analysis"""
-        print("Iniciando análisis sintáctico...")
         success = self.Program()
         
         if success and self.current is None:
-            print("✓ Análisis sintáctico completado exitosamente")
             return True
         elif success and self.current is not None:
             self.error("EOF")
             print(f"✗ Error: Tokens sobrantes después del análisis: {self.current}")
             return False
         else:
-            print("✗ Análisis sintáctico falló")
+            print("D;")
             for error in self.errors:
                 print(f"  {error}")
             return False
