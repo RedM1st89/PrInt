@@ -4,12 +4,13 @@ Para unabellahamburguesa
     El precio Puntual;
     Se_Escribe "Ingresa cuantas hamburguesas quieres: ";
     Escucha -el comestible;
-    Si -el comestible Envidia -a 2 Entonces
+    Si (-el comestible Envidia -a 2) Entonces
     {
         -el precio Dice comestible Abraza -a 120;
         Se_Escribe "El precio total es:", precio;
     }
-    Si -el comestible Envidia -a 5 Entonces
+    Se_Establece
+    Si (-el comestible Envidia -a 5) Entonces
     {
         -el precio Dice comestible Abraza -a 110;
         Se_Escribe "Oferta Especial! El precio total es:", precio;
@@ -19,5 +20,11 @@ Para unabellahamburguesa
         -el precio Dice comestible Abraza -a 100;
         Se_Escribe "Oferta Super Especial! El precio total es:", precio;
     }
+    Se_Establece
 }
 Fin
+
+Posdata amaranto Dice gato (cable) {
+    Se_Escribe "Hola";
+} 
+Adios

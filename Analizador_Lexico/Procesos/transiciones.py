@@ -1,13 +1,27 @@
 transiciones = [
      # ---------- Palabras clave ----------
     
-    #"Para"
+    # "Para"
     (0, 1, 'P'),
     (1, 2, 'a'),
     (2, 3, 'r'),
     (3, 4, 'a'),
     
-    #"Puntual" (desde P)
+    # Adios (Desde A)
+    (171, 293, 'd'),
+    (293, 294, 'i'),
+    (294, 295, 'o'),
+    (295, 296, 's'),
+    
+    # "Posdata" (desde P)
+    (1, 287, 'o'),
+    (287, 288, 's'),
+    (288, 289, 'd'),
+    (289, 290, 'a'),
+    (290, 291, 't'),
+    (291, 292, 'a'),
+
+    # "Puntual" (desde P)
     (1, 5, 'u'),
     (5, 6, 'n'),
     (6, 7, 't'),
@@ -66,20 +80,29 @@ transiciones = [
     (45, 46, 'n'),
     (46, 47, 'a'),
     
-    #"Dice"
+    # "Se_Establece"
+    (29, 280, 't'),
+    (280, 281, 'a'),
+    (281, 282, 'b'),
+    (282, 283, 'l'),
+    (283, 284, 'e'),
+    (284, 285, 'c'),
+    (285, 286, 'e'),
+
+    # "Dice"
     (0, 48, 'D'),
     (48, 49, 'i'),
     (49, 50, 'c'),
     (50, 51, 'e'),
     
-    #"Disuade" (desde D)
+    # "Disuade" (desde D)
     (49, 52, 's'),
     (52, 53, 'u'),
     (53, 54, 'a'),
     (54, 55, 'd'),
     (55, 56, 'e'),
     
-    #"Decida" y "De" (desde D)
+    # "Decida" y "De" (desde D)
     (48, 57, 'e'),
 
     (57, 58, 'c'),
@@ -87,12 +110,12 @@ transiciones = [
     (59, 60, 'd'),
     (60, 61, 'a'),
     
-    #"Con"
+    # "Con"
     (0, 62, 'C'),
     (62, 63, 'o'),
     (63, 64, 'n'),
     
-    #"Convence" (desde Con)
+    # "Convence" (desde Con)
     (64, 65, 'v'),
     (65, 66, 'e'),
     (66, 67, 'n'),
@@ -107,50 +130,50 @@ transiciones = [
     (73, 74, 't'),
     (74, 75, 'e'),
     
-    #"Cuando" (desde C)
+    # "Cuando" (desde C)
     (62, 76, 'u'),
     (76, 77, 'a'),
     (77, 78, 'n'),
     (78, 79, 'd'),
     (79, 80, 'o'),
     
-    #"Canta" (desde C)
+    # "Canta" (desde C)
     (62, 81, 'a'),
     (81, 82, 'n'),
     (82, 83, 't'),
     (83, 84, 'a'),
     
-    #"Coseno" (desde Co)
+    # "Coseno" (desde Co)
     (63, 85, 's'),
     (85, 86, 'e'),
     (86, 87, 'n'),
     (87, 88, 'o'),
     
-    #"Crece" (desde C)
+    # "Crece" (desde C)
     (62, 89, 'r'),
     (89, 90, 'e'),
     (90, 91, 'c'),
     (91, 92, 'e'),
     
-    #"Chance" (desde C)
+    # "Chance" (desde C)
     (62, 93, 'h'),
     (93, 94, 'a'),
     (94, 95, 'n'),
     (95, 96, 'c'),
     (96, 97, 'e'),
     
-    #"El"
+    # "El"
     (0, 98, 'E'),
     (98, 99, 'l'),
     
-    #"Elimina" (desde El)
+    # "Elimina" (desde El)
     (99, 100, 'i'),
     (100, 101, 'm'),
     (101, 102, 'i'),
     (102, 103, 'n'),
     (103, 104, 'a'),
     
-    #"Entiende" (desde E)
+    # "Entiende" (desde E)
     (98, 105, 'n'),
     (105, 106, 't'),
     (106, 107, 'i'),
@@ -159,14 +182,14 @@ transiciones = [
     (109, 110, 'd'),
     (110, 111, 'e'),
     
-    #"Entonces" (desde En)
+    # "Entonces" (desde En)
     (106, 112, 'o'),
     (112, 113, 'n'),
     (113, 114, 'c'),
     (114, 115, 'e'),
     (115, 116, 's'),
     
-    #"Escucha" (desde Es)
+    # "Escucha" (desde Es)
     (98, 117, 's'),
     (117, 118, 'c'),
     (118, 119, 'u'),
@@ -174,14 +197,14 @@ transiciones = [
     (120, 121, 'h'),
     (121, 122, 'a'),
     
-    #"Envidia" (desde En)
+    # "Envidia" (desde En)
     (105, 123, 'v'),
     (123, 124, 'i'),
     (124, 125, 'd'),
     (125, 126, 'i'),
     (126, 127, 'a'),
     
-    #"Empatiza" (desde E)
+    # "Empatiza" (desde E)
     (98, 128, 'm'),
     (128, 129, 'p'),
     (129, 130, 'a'),
@@ -190,7 +213,7 @@ transiciones = [
     (132, 133, 'z'),
     (133, 134, 'a'),
     
-    #"Explora" (desde Ex)
+    # "Explora" (desde Ex)
     (98, 135, 'x'),
     (135, 136, 'p'),
     (136, 137, 'l'),
@@ -198,11 +221,11 @@ transiciones = [
     (138, 139, 'r'),
     (139, 140, 'a'),
     
-    #"La"
+    # "La"
     (0, 141, 'L'),
     (141, 142, 'a'),
     
-    #"Eminente" (desde E)
+    # "Eminente" (desde E)
     (128, 143, 'i'),
     (143, 144, 'n'),
     (144, 145, 'e'),
@@ -210,7 +233,7 @@ transiciones = [
     (146, 147, 't'),
     (147, 148, 'e'),
     
-    #"Se_Sienta" (desde Se_)
+    # "Se_Sienta" (desde Se_)
     (27, 149, 'S'),
     (149, 150, 'i'),
     (150, 151, 'e'),
@@ -218,21 +241,21 @@ transiciones = [
     (152, 153, 't'),
     (153, 154, 'a'),
     
-    #"Sino" (desde Sin)
+    # "Sino" (desde Sin)
     (20, 155, 'o'),
     
-    #"Seno" (desde Se)
+    # "Seno" (desde Se)
     (26, 156, 'n'),
     (156, 157, 'o'),
     
-    #"Simplifica" (desde Simpl)
+    # "Simplifica" (desde Simpl)
     (18, 158, 'i'),
     (158, 159, 'f'),
     (159, 160, 'i'),
     (160, 161, 'c'),
     (161, 162, 'a'),
     
-    #"Fragmenta"
+    # "Fragmenta"
     (11, 163, 'r'),
     (163, 164, 'a'),
     (164, 165, 'g'),
@@ -242,7 +265,7 @@ transiciones = [
     (168, 169, 't'),
     (169, 170, 'a'),
     
-    #"Abraza"
+    # "Abraza"
     (0, 171, 'A'),
     (171, 172, 'b'),
     (172, 173, 'r'),
@@ -250,7 +273,7 @@ transiciones = [
     (174, 175, 'z'),
     (175, 176, 'a'),
     
-    #"Absoluto" (desde Ab)
+    # "Absoluto" (desde Ab)
     (172, 177, 's'),
     (177, 178, 'o'),
     (178, 179, 'l'),
@@ -258,12 +281,12 @@ transiciones = [
     (180, 181, 't'),
     (181, 182, 'o'),
     
-    #"Arco" (desde A)
+    # "Arco" (desde A)
     (171, 183, 'r'),
     (183, 184, 'c'),
     (184, 202, 'o'),
     
-    #"Reparte"
+    # "Reparte"
     (0, 185, 'R'),
     (185, 186, 'e'),
     (186, 187, 'p'),
@@ -272,13 +295,13 @@ transiciones = [
     (189, 190, 't'),
     (190, 191, 'e'),
     
-    #"Repetir" (desde Rep)
+    # "Repetir" (desde Rep)
     (187, 192, 'e'),
     (192, 193, 't'),
     (193, 194, 'i'),
     (194, 195, 'r'),
     
-    #"Rendirse" (desde Re)
+    # "Rendirse" (desde Re)
     (186, 196, 'n'),
     (196, 197, 'd'),
     (197, 198, 'i'),
@@ -286,7 +309,7 @@ transiciones = [
     (199, 200, 's'),
     (200, 201, 'e'),
     
-    #"Inspira"
+    # "Inspira"
     (0, 203, 'I'),
     (203, 204, 'n'),
     (204, 205, 's'),
@@ -295,7 +318,7 @@ transiciones = [
     (207, 208, 'r'),
     (208, 209, 'a'),
     
-    #"Invierte" (desde In)
+    # "Invierte" (desde In)
     (204, 210, 'v'),
     (210, 211, 'i'),
     (211, 212, 'e'),
@@ -303,17 +326,17 @@ transiciones = [
     (213, 214, 't'),
     (214, 215, 'e'),
     
-    #"Y"
+    # "Y"
     (0, 216, 'Y'),
     
-    #"Ni"
+    # "Ni"
     (0, 217, 'N'),
     (217, 218, 'i'),
     
-    #"O"
+    # "O"
     (0, 219, 'O'),
     
-    #"Versatil"
+    # "Versatil"
     (0, 220, 'V'),
     (220, 221, 'e'),
     (221, 222, 'r'),
@@ -323,7 +346,7 @@ transiciones = [
     (225, 226, 'i'),
     (226, 227, 'l'),
     
-    #"Visitar" (desde V)
+    # "Visitar" (desde V)
     (220, 228, 'i'),
     (228, 229, 's'),
     (229, 230, 'i'),
@@ -331,20 +354,20 @@ transiciones = [
     (231, 232, 'a'),
     (232, 233, 'r'),
     
-    #"Hasta"
+    # "Hasta"
     (0, 234, 'H'),
     (234, 235, 'a'),
     (235, 236, 's'),
     (236, 237, 't'),
     (237, 238, 'a'),
     
-    #"Hasta_Que" (desde Hasta)
+    # "Hasta_Que" (desde Hasta)
     (238, 239, '_'),
     (239, 240, 'Q'),
     (240, 241, 'u'),
     (241, 242, 'e'),
     
-    #"Mientras"
+    # "Mientras"
     (0, 243, 'M'),
     (243, 244, 'i'),
     (244, 245, 'e'),
@@ -354,7 +377,7 @@ transiciones = [
     (248, 249, 'a'),
     (249, 250, 's'),
     
-    #"Trunca"
+    # "Trunca"
     (0, 251, 'T'),
     (251, 252, 'r'),
     (252, 253, 'u'),
@@ -362,12 +385,12 @@ transiciones = [
     (254, 255, 'c'),
     (255, 256, 'a'),
 
-    #"Verdad" viene de Ver
+    # "Verdad" viene de Ver
     (222, 269, 'd'),
     (269, 270, 'a'),
     (270, 271, 'd'),
 
-    #"Mentira" viene de M
+    # "Mentira" viene de M
     (243, 272, 'e'),
     (272, 273, 'n'),
     (273, 274, 't'),
@@ -417,6 +440,7 @@ estados_finales = {
     34,   # Se_Escribe
     40,   # Se_Retira
     47,   # Se_Culmina
+    286,  # Se_Establece
     51,   # Dice
     56,   # Disuade
     57,   # De
@@ -461,8 +485,8 @@ estados_finales = {
     242,  # Hasta_Que
     250,  # Mientras
     256,  # Trunca
-    271, # Verdad
-    277, # Mentira
+    271,  # Verdad
+    277,  # Mentira
     
     # Símbolos
     257,  # ;

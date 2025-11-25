@@ -9,7 +9,7 @@ Accon -> Defi | Asig | Impr | Lect | Condif | CycleFor | CycleRep | CycleWhile |
 Condif -> if delim_lparen Exprelog delim_rparen then delim_lkey Cont delim_rkey Condif' 
 Condif' -> else delim_lkey Cont delim_rkey end_if | end_if
 
-Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey
+Func -> function id equal id delim_lparen Varmul delim_rparen delim_lkey Cont delim_rkey end_function
 
 CycleWhile -> while delim_lparen Exprelog delim_rparen do delim_lkey Contblo delim_rkey end_while
 CycleRep -> repeat delim_lkey Contblo delim_rkey until delim_lparen Exprelog delim_rparen

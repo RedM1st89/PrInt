@@ -53,6 +53,9 @@ llaves = {
     242: "UNTIL",        # Hasta_Que
     250: "WHILE",        # Mientras
     256: "FUN_TRUNC",    # Trunca
+    286: "END_IF",       # Se_Establece
+    292: "FUNCTION",     # Posdata
+    296: "END_FUNCTION", # Adios
     
     # Símbolos
     257: "DELIM_LINE",   # ;
