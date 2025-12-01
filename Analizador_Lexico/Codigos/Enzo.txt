@@ -21,10 +21,11 @@ Para unabellahamburguesa
         Se_Escribe "Oferta Super Especial! El precio total es:", precio;
     }
     Se_Establece
+    precio Dice funcion1(comestible);
 }
 Fin
 
-Posdata amaranto Dice gato (cable) {
-    Se_Escribe "Hola";
+Posdata resultado Dice funcion1 (x) {
+    -el resultado Dice x Abraza -a 10;
 } 
 Adios

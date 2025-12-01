@@ -4,6 +4,13 @@ from .transiciones import num
 def tokenizacion(lexi, texto):
     resultado = []
     i = 0
+    var_nombre = ''
+    var_tipo = ''
+    var_region = 0
+    func_resultado = ''
+    func_nombre = ''
+    func_mascara = []
+    func_region = 0
     
     while i < len(texto):
         # Saltar espacios en blanco y saltos de línea fuera de strings
@@ -54,6 +61,10 @@ def tokenizacion(lexi, texto):
                 # Buscar transición específica por letra exacta
                 if letra in trans:
                     estado = trans[letra]
+                    if palanca == 1:
+                        var_nombre.append(letra)
+                    elif palanca == 2:
+                        var_tipo.append(letra)
                 # Buscar por categorías
                 elif letra >= 'a' and letra <= 'z' and 'minuschar' in trans:
                     estado = trans['minuschar']
@@ -68,6 +79,16 @@ def tokenizacion(lexi, texto):
                 else:
                     # Si no hay transición válida, verificar si el estado actual es final
                     if estado in lexi.estados_finales:
+                        if estado == 99:
+                            palanca = 1
+                            var_region = region
+                        elif palanca == 1:
+                            palanca = 2
+                        elif palanca == 2:
+                            palanca = 0
+                        if estado == 292:
+                            region += 1
+                            func_region = region
                         # Es un token válido, esta letra pertenece al siguiente token
                         break
                     else:
