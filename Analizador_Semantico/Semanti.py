@@ -4,7 +4,7 @@ class SymbolEntry:
         self.nombre = nombre
         self.tipo = tipo  # INT, REAL, BOOL, STRING, CHAR
         self.linea_declaracion = linea_declaracion
-        self.scope = scope  # 0 = global, 1+ = nested blocks
+        self.scope = scope  # 0 = global/class, 1+ = functions
         self.id_unico = id_unico  # VAR_001, FUNC_001, etc.
         self.lineas_uso = []  # Lines where it's used
         self.tiene_valor = False  # Has been assigned a value
@@ -32,24 +32,11 @@ class SymbolEntry:
 class SymbolTable:
     """Symbol table for semantic analysis"""
     def __init__(self):
-        self.tabla = {}  # Stores all symbols by name
-        self.scopes = [{}]  # Stack of scopes (list of dicts)
+        self.tabla = {}  # Stores all symbols by unique key (name + scope)
+        self.scope_actual_num = 0  # Current scope: 0 = class, 1+ = functions
         self.contador_var = 0
         self.contador_func = 0
         self.errores = []
-    
-    def scope_actual(self):
-        """Get current scope level"""
-        return len(self.scopes) - 1
-    
-    def entrar_scope(self):
-        """Enter new scope"""
-        self.scopes.append({})
-    
-    def salir_scope(self):
-        """Exit current scope"""
-        if len(self.scopes) > 1:
-            self.scopes.pop()
     
     def generar_id_variable(self):
         """Generate unique ID for variables"""
@@ -61,57 +48,66 @@ class SymbolTable:
         self.contador_func += 1
         return f"FUNC_{self.contador_func:03d}"
     
+    def _generar_clave(self, nombre, scope):
+        """Generate unique key for symbol lookup"""
+        return f"{nombre}@{scope}"
+    
     def agregar_variable(self, nombre, tipo, linea, es_parametro=False):
         """Add a variable to the symbol table"""
-        scope = self.scope_actual()
+        clave = self._generar_clave(nombre, self.scope_actual_num)
         
         # Check if already declared in current scope
-        if nombre in self.scopes[scope]:
-            entry = self.scopes[scope][nombre]
+        if clave in self.tabla:
+            entry = self.tabla[clave]
             self.errores.append(
                 f"Error línea {linea}: Variable '{nombre}' ya declarada en línea {entry.linea_declaracion}"
             )
             return None
         
         id_unico = self.generar_id_variable()
-        entry = SymbolEntry(nombre, tipo, linea, scope, id_unico)
+        entry = SymbolEntry(nombre, tipo, linea, self.scope_actual_num, id_unico)
         entry.es_parametro = es_parametro
         
         # Parameters automatically have value
         if es_parametro:
             entry.tiene_valor = True
         
-        self.scopes[scope][nombre] = entry
-        self.tabla[nombre] = entry  # Also keep in global table for easy lookup
+        self.tabla[clave] = entry
         return entry
     
     def agregar_funcion(self, nombre, tipo_retorno, parametros, linea):
-        """Add a function to the symbol table"""
-        scope = self.scope_actual()
+        """Add a function to the symbol table (always in global scope)"""
+        clave = self._generar_clave(nombre, 0)  # Functions always in scope 0
         
-        if nombre in self.scopes[scope]:
+        if clave in self.tabla:
             self.errores.append(
                 f"Error línea {linea}: Función '{nombre}' ya declarada"
             )
             return None
         
         id_unico = self.generar_id_funcion()
-        entry = SymbolEntry(nombre, "FUNCTION", linea, scope, id_unico)
+        entry = SymbolEntry(nombre, "FUNCTION", linea, 0, id_unico)
         entry.es_funcion = True
         entry.parametros = parametros
         entry.tipo_retorno = tipo_retorno
         entry.tiene_valor = True  # Functions always "have value"
         
-        self.scopes[scope][nombre] = entry
-        self.tabla[nombre] = entry
+        self.tabla[clave] = entry
         return entry
     
     def buscar(self, nombre):
-        """Search for a symbol in scopes (from inner to outer)"""
-        # Search from current scope outward
-        for scope in reversed(self.scopes):
-            if nombre in scope:
-                return scope[nombre]
+        """Search for a symbol (current scope first, then global)"""
+        # First try current scope
+        clave_actual = self._generar_clave(nombre, self.scope_actual_num)
+        if clave_actual in self.tabla:
+            return self.tabla[clave_actual]
+        
+        # If not in current scope and we're in a function, try global scope
+        if self.scope_actual_num > 0:
+            clave_global = self._generar_clave(nombre, 0)
+            if clave_global in self.tabla:
+                return self.tabla[clave_global]
+        
         return None
     
     def marcar_asignacion(self, nombre, linea):
@@ -212,17 +208,9 @@ class SemanticAnalyzer:
     
     def analizar(self):
         """Perform complete semantic analysis"""
-        print("  → Pasada 1: Construcción de tabla de símbolos...")
-        self.construir_tabla_simbolos()
+        print("  → Análisis semántico en progreso...")
         
-        print("  → Pasada 2: Verificación de tipos y uso de variables...")
-        self.pos = 0
-        self.verificar_semantica()
-        
-        return self.tabla
-    
-    def construir_tabla_simbolos(self):
-        """Build symbol table (first pass)"""
+        # Single pass: process declarations and usage together
         while self.pos < len(self.tokens):
             token = self.current()
             if not token:
@@ -232,14 +220,20 @@ class SemanticAnalyzer:
                 self.procesar_declaracion()
             elif token.tipo == "FUNCTION":
                 self.procesar_funcion()
-            elif token.tipo == "DELIM_LKEY":
-                self.tabla.entrar_scope()
-                self.advance()
-            elif token.tipo == "DELIM_RKEY":
-                self.tabla.salir_scope()
-                self.advance()
+            elif token.tipo == "ID" and self.peek() and self.peek().tipo == "EQUAL":
+                self.verificar_asignacion()
+            elif token.tipo == "READ":
+                self.verificar_read()
+            elif token.tipo == "WRITE":
+                self.verificar_write()
+            elif token.tipo == "IF":
+                self.verificar_condicion()
+            elif token.tipo == "WHILE":
+                self.verificar_condicion()
             else:
                 self.advance()
+        
+        return self.tabla
     
     def procesar_declaracion(self):
         """Process variable declaration: DEFINIR ID TIPO"""
@@ -300,38 +294,42 @@ class SemanticAnalyzer:
             self.advance()
         
         if self.current() and self.current().tipo == "DELIM_LKEY":
-            self.tabla.entrar_scope()
+            # Enter function scope
+            self.tabla.scope_actual_num += 1
             self.advance()
             
             # Add parameters as variables in function scope
             for param in parametros:
                 self.tabla.agregar_variable(param, "INT", linea, es_parametro=True)
-    
-    def verificar_semantica(self):
-        """Verify semantics (second pass)"""
-        while self.pos < len(self.tokens):
-            token = self.current()
-            if not token:
-                break
             
-            if token.tipo == "ID" and self.peek() and self.peek().tipo == "EQUAL":
-                self.verificar_asignacion()
-            elif token.tipo == "READ":
-                self.verificar_read()
-            elif token.tipo == "WRITE":
-                self.verificar_write()
-            elif token.tipo == "IF":
-                self.verificar_condicion()
-            elif token.tipo == "WHILE":
-                self.verificar_condicion()
-            elif token.tipo == "DELIM_LKEY":
-                self.tabla.entrar_scope()
-                self.advance()
-            elif token.tipo == "DELIM_RKEY":
-                self.tabla.salir_scope()
-                self.advance()
-            else:
-                self.advance()
+            # Process function body until we find END_FUNCTION
+            depth = 1
+            while self.current() and depth > 0:
+                token = self.current()
+                
+                if token.tipo == "DELIM_LKEY":
+                    depth += 1
+                    self.advance()
+                elif token.tipo == "DELIM_RKEY":
+                    depth -= 1
+                    if depth == 0:
+                        # Exiting function scope
+                        self.tabla.scope_actual_num -= 1
+                    self.advance()
+                elif token.tipo == "DEFINIR":
+                    self.procesar_declaracion()
+                elif token.tipo == "ID" and self.peek() and self.peek().tipo == "EQUAL":
+                    self.verificar_asignacion()
+                elif token.tipo == "READ":
+                    self.verificar_read()
+                elif token.tipo == "WRITE":
+                    self.verificar_write()
+                elif token.tipo == "IF":
+                    self.verificar_condicion()
+                elif token.tipo == "WHILE":
+                    self.verificar_condicion()
+                else:
+                    self.advance()
     
     def verificar_asignacion(self):
         """Verify assignment: ID = expression"""
@@ -344,18 +342,29 @@ class SemanticAnalyzer:
             self.tabla.errores.append(
                 f"Error línea {linea}: Variable '{nombre}' no declarada"
             )
-            self.advance()
+            # Skip to end of statement
+            while self.current() and self.current().tipo != "DELIM_LINE":
+                self.advance()
+            if self.current():
+                self.advance()
             return
         
-        tipo_var = entry.tipo
         self.advance()  # Skip ID
         self.advance()  # Skip EQUAL
         
-        tipo_expr = self.evaluar_expresion()
+        # Check all IDs in the expression
+        while self.current() and self.current().tipo != "DELIM_LINE":
+            if self.current().tipo == "ID":
+                expr_nombre = self.current().lexema
+                expr_linea = self.current().linea
+                self.tabla.verificar_tiene_valor(expr_nombre, expr_linea)
+            self.advance()
         
-        if tipo_expr:
-            self.verificar_compatibilidad_tipos(tipo_var, tipo_expr, linea)
-            self.tabla.marcar_asignacion(nombre, linea)
+        # Mark assignment after evaluating expression
+        self.tabla.marcar_asignacion(nombre, linea)
+        
+        if self.current() and self.current().tipo == "DELIM_LINE":
+            self.advance()
     
     def verificar_read(self):
         """Verify READ statement - assigns value to variable"""
@@ -375,6 +384,12 @@ class SemanticAnalyzer:
                 )
             
             self.advance()
+        
+        # Skip to end of statement
+        while self.current() and self.current().tipo != "DELIM_LINE":
+            self.advance()
+        if self.current():
+            self.advance()
     
     def verificar_write(self):
         """Verify WRITE statement - checks variables have values"""
@@ -387,10 +402,12 @@ class SemanticAnalyzer:
                 self.tabla.verificar_tiene_valor(nombre, linea)
             
             self.advance()
+        
+        if self.current() and self.current().tipo == "DELIM_LINE":
+            self.advance()
     
     def verificar_condicion(self):
         """Verify IF/WHILE condition"""
-        linea = self.current().linea
         self.advance()  # Skip IF/WHILE
         
         if self.current() and self.current().tipo == "DELIM_LPAREN":
@@ -404,73 +421,9 @@ class SemanticAnalyzer:
                     self.tabla.verificar_tiene_valor(nombre, linea)
                 
                 self.advance()
-    
-    def evaluar_expresion(self):
-        """Evaluate expression type"""
-        token = self.current()
-        
-        if not token:
-            return None
-        
-        # Literal values
-        if token.tipo == "DATA_INT":
-            self.advance()
-            return "INT"
-        elif token.tipo == "DATA_DOUBLE":
-            self.advance()
-            return "REAL"
-        elif token.tipo == "DATA_STRING":
-            self.advance()
-            return "STRING"
-        elif token.tipo in ["TRUE", "FALSE"]:
-            self.advance()
-            return "BOOL"
-        
-        # Variable
-        elif token.tipo == "ID":
-            nombre = token.lexema
-            linea = token.linea
             
-            entry = self.tabla.buscar(nombre)
-            if entry:
-                self.tabla.verificar_tiene_valor(nombre, linea)
+            if self.current() and self.current().tipo == "DELIM_RPAREN":
                 self.advance()
-                
-                # Check for function call
-                if self.current() and self.current().tipo == "DELIM_LPAREN":
-                    self.skip_until("DELIM_RPAREN")
-                    if self.current():
-                        self.advance()
-                
-                return entry.tipo
-            else:
-                self.advance()
-                return None
-        
-        # Skip expression
-        while self.current() and self.current().tipo not in ["DELIM_LINE", "DELIM_RPAREN", "DELIM_COMMA"]:
-            self.advance()
-        
-        return None
-    
-    def skip_until(self, token_tipo):
-        """Skip tokens until finding specific type"""
-        while self.current() and self.current().tipo != token_tipo:
-            self.advance()
-    
-    def verificar_compatibilidad_tipos(self, tipo_var, tipo_expr, linea):
-        """Check type compatibility"""
-        if tipo_var == tipo_expr:
-            return True
-        
-        # Allow INT -> REAL promotion
-        if tipo_var == "REAL" and tipo_expr == "INT":
-            return True
-        
-        self.tabla.errores.append(
-            f"Error línea {linea}: Incompatibilidad de tipos: no se puede asignar '{tipo_expr}' a '{tipo_var}'"
-        )
-        return False
 
 
 def inicia_semantico(tokens):
