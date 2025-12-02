@@ -1,6 +1,6 @@
 from Analizador_Lexico.Lexi import inicia_lexico
 from Analizador_Sintactico.Sintac import inicia_sintactico
-from Analizador_Semantico import inicia_semantico
+from Analizador_Semantico.Semanti import inicia_semantico
 from pathlib import Path
 
 file = input('Hola! Dime el nombre del archivo que quieres probar:) >>>')
@@ -42,7 +42,7 @@ print("="*90)
 s = inicia_sintactico(tokens_ricos)
 
 if not s:
-    print("✗ Error en análisis sintáctico - no se puede continuar")
+    print("✗ Error en análisis sintáctico")
     exit(1)
 
 print("✓ Estructura sintáctica válida")
@@ -54,10 +54,8 @@ print("="*90)
 
 tabla, tiene_errores = inicia_semantico(tokens_ricos)
 
-# Mostrar la tabla de símbolos
 tabla.imprimir_tabla()
 
-# Mostrar errores si hay
 if tiene_errores:
     tabla.imprimir_errores()
     print("\n✗ Compilación fallida: errores semánticos encontrados")
