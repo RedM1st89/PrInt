@@ -56,8 +56,4 @@ if tiene_errores:
     print("\n Semantico todo mal")
     exit(1)
 
-print(" Ta bien perro ".center(90))
-print("\n")
-print(f"  • Tokens procesados: {len(tokens)}")
-print(f"  • Variables declaradas: {tabla.contador_var}")
-print(f"  • Funciones declaradas: {tabla.contador_func}")
+print("Ta bien perro ")
