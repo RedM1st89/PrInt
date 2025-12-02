@@ -1,24 +1,37 @@
 from .tokens import llaves
 from .transiciones import num
 
+class Token:
+    def __init__(self, tipo, lexema, linea):
+        self.tipo = tipo
+        self.lexema = lexema
+        self.linea = linea
+    
+    def __repr__(self):
+        return f"Token({self.tipo}, '{self.lexema}', L{self.linea})"
+    
+    def __str__(self):
+        return self.tipo  # Para compatibilidad con análisis sintáctico
+
 def tokenizacion(lexi, texto):
     resultado = []
     i = 0
-    var_nombre = ''
-    var_tipo = ''
-    var_region = 0
-    func_resultado = ''
-    func_nombre = ''
-    func_mascara = []
-    func_region = 0
+    linea_actual = 1  # Contador de líneas
     
     while i < len(texto):
-        # Saltar espacios en blanco y saltos de línea fuera de strings
-        if texto[i] in (' ', '\t', '\n', '\r'):
+        # Contar saltos de línea para tracking
+        if texto[i] == '\n':
+            linea_actual += 1
             i += 1
             continue
             
-        # Inicializar para nuevo token
+        # Saltar espacios en blanco y tabs
+        if texto[i] in (' ', '\t', '\r'):
+            i += 1
+            continue
+            
+        # Guardar posición inicial del token
+        inicio = i
         estado = lexi.estado_inicial
         j = i
         
@@ -29,7 +42,7 @@ def tokenizacion(lexi, texto):
             if '"' in trans:
                 estado = trans['"']
             else:
-                raise ValueError(f"Error al iniciar string en posición {i}")
+                raise ValueError(f"Error al iniciar string en línea {linea_actual}")
             
             j += 1
             # Procesar caracteres dentro del string
@@ -38,7 +51,7 @@ def tokenizacion(lexi, texto):
                 if 'string' in trans:
                     estado = trans['string']
                 else:
-                    raise ValueError(f"Error procesando string en posición {j}")
+                    raise ValueError(f"Error procesando string en línea {linea_actual}")
                 j += 1
             
             # Comilla de cierre
@@ -48,9 +61,9 @@ def tokenizacion(lexi, texto):
                     estado = trans['"']
                     j += 1
                 else:
-                    raise ValueError(f"Error cerrando string en posición {j}")
+                    raise ValueError(f"Error cerrando string en línea {linea_actual}")
             else:
-                raise ValueError(f"String sin cerrar iniciado en posición {i}")
+                raise ValueError(f"String sin cerrar en línea {linea_actual}")
         
         else:
             # Procesar token normal (palabra, número, símbolo)
@@ -61,10 +74,6 @@ def tokenizacion(lexi, texto):
                 # Buscar transición específica por letra exacta
                 if letra in trans:
                     estado = trans[letra]
-                    if palanca == 1:
-                        var_nombre.append(letra)
-                    elif palanca == 2:
-                        var_tipo.append(letra)
                 # Buscar por categorías
                 elif letra >= 'a' and letra <= 'z' and 'minuschar' in trans:
                     estado = trans['minuschar']
@@ -79,20 +88,10 @@ def tokenizacion(lexi, texto):
                 else:
                     # Si no hay transición válida, verificar si el estado actual es final
                     if estado in lexi.estados_finales:
-                        if estado == 99:
-                            palanca = 1
-                            var_region = region
-                        elif palanca == 1:
-                            palanca = 2
-                        elif palanca == 2:
-                            palanca = 0
-                        if estado == 292:
-                            region += 1
-                            func_region = region
                         # Es un token válido, esta letra pertenece al siguiente token
                         break
                     else:
-                        raise ValueError(f"No es posible tokenizar en posición {i}, carácter '{letra}', estado {estado}")
+                        raise ValueError(f"No es posible tokenizar en línea {linea_actual}, carácter '{letra}', estado {estado}")
                 
                 j += 1
                 
@@ -102,13 +101,17 @@ def tokenizacion(lexi, texto):
         
         # Verificar si llegamos a un estado final
         if estado in lexi.estados_finales:
-            token = llaves.get(estado)
-            if token:
-                resultado.append(token)
+            token_tipo = llaves.get(estado)
+            if token_tipo:
+                # Extraer el lexema (texto original)
+                lexema = texto[inicio:j]
+                # Crear token rico con tipo, lexema y línea
+                token_obj = Token(token_tipo, lexema, linea_actual)
+                resultado.append(token_obj)
             else:
-                raise ValueError(f"Estado final desconocido {estado}")
+                raise ValueError(f"Estado final desconocido {estado} en línea {linea_actual}")
         else:
-            raise ValueError(f"No termina en estado final (estado {estado})")
+            raise ValueError(f"No termina en estado final (estado {estado}) en línea {linea_actual}")
         
         i = j
     
