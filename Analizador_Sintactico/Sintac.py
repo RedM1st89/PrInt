@@ -20,7 +20,7 @@ class SyntaxAnalyzer:
             return True
         return False
     
-    # Error mejorado que muestra línea
+    # Error en base a la linea
     def error(self, expected):
         linea = self.current.linea if self.current else "EOF"
         token_actual = self.current.tipo if self.current else "EOF"
@@ -642,6 +642,6 @@ class SyntaxAnalyzer:
 
 
 def inicia_sintactico(tokens_list):
-    # Ahora recibe lista de objetos Token directamente
+    # Agarra tokens super duper
     analyzer = SyntaxAnalyzer(tokens_list)
     return analyzer.analyze()

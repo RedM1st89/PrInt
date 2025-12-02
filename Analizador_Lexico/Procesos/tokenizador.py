@@ -11,31 +11,33 @@ class Token:
         return f"Token({self.tipo}, '{self.lexema}', L{self.linea})"
     
     def __str__(self):
-        return self.tipo  # Para compatibilidad con análisis sintáctico
+        # Necesario para el sintactico para solo identificar tokens
+        return self.tipo  
 
 def tokenizacion(lexi, texto):
     resultado = []
     i = 0
-    linea_actual = 1  # Contador de líneas
+    # Contando las lineas para hacer un super mega duper token
+    linea_actual = 1 
     
     while i < len(texto):
-        # Contar saltos de línea para tracking
+        # Mueve lineas con \n :D
         if texto[i] == '\n':
             linea_actual += 1
             i += 1
             continue
             
-        # Saltar espacios en blanco y tabs
+        # Salta espacios inecesarios en caso de 
         if texto[i] in (' ', '\t', '\r'):
             i += 1
             continue
             
-        # Guardar posición inicial del token
+        # Guarda en que linea comenzara el token
         inicio = i
         estado = lexi.estado_inicial
         j = i
         
-        # Caso especial para strings
+        # Pa strings
         if texto[i] == '"':
             # Primera comilla
             trans = lexi.estados.get(estado, {})
@@ -45,7 +47,7 @@ def tokenizacion(lexi, texto):
                 raise ValueError(f"Error al iniciar string en línea {linea_actual}")
             
             j += 1
-            # Procesar caracteres dentro del string
+            # Todo lo de adentro
             while j < len(texto) and texto[j] != '"':
                 trans = lexi.estados.get(estado, {})
                 if 'string' in trans:
@@ -54,7 +56,7 @@ def tokenizacion(lexi, texto):
                     raise ValueError(f"Error procesando string en línea {linea_actual}")
                 j += 1
             
-            # Comilla de cierre
+            # Comilla final
             if j < len(texto) and texto[j] == '"':
                 trans = lexi.estados.get(estado, {})
                 if '"' in trans:
@@ -71,10 +73,10 @@ def tokenizacion(lexi, texto):
                 letra = texto[j]
                 trans = lexi.estados.get(estado, {})
                 
-                # Buscar transición específica por letra exacta
+                # Transiciones
                 if letra in trans:
                     estado = trans[letra]
-                # Buscar por categorías
+                # Categorias
                 elif letra >= 'a' and letra <= 'z' and 'minuschar' in trans:
                     estado = trans['minuschar']
                 elif letra in num and 'num' in trans:
@@ -103,9 +105,9 @@ def tokenizacion(lexi, texto):
         if estado in lexi.estados_finales:
             token_tipo = llaves.get(estado)
             if token_tipo:
-                # Extraer el lexema (texto original)
+                # Extraer el lexema (texto original) para el super duper token
                 lexema = texto[inicio:j]
-                # Crear token rico con tipo, lexema y línea
+                # Crea el token con tipo, lexema y línea
                 token_obj = Token(token_tipo, lexema, linea_actual)
                 resultado.append(token_obj)
             else:

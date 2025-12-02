@@ -1,6 +1,6 @@
 Para unabellahamburguesa
 {
-    El comestible Puntual;
+    El Comestible Puntual;
     El precio Puntual;
     El animal Puntual;
     Se_Escribe "Ingresa cuantas hamburguesas quieres: ";

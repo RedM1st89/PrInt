@@ -1,8 +1,6 @@
 Para unabellahamburguesa
 {
     El comestible Puntual;
-    El precio Puntual;
-    El animal Puntual;
     Se_Escribe "Ingresa cuantas hamburguesas quieres: ";
     Escucha -el comestible;
     Si (-el comestible Envidia -a 2) Entonces
